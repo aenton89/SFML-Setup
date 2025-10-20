@@ -5,7 +5,21 @@
 - Conan
 - Visual C++ 17 (2022)
 
-## 2. run:
+## 2. TODO's:
+### PROJEKT 1; TERMIN (chyba) 06.12; TODO:
+- podstawowa mapa: przeszkody to pare rozmieszczonych okręgów
+- implementacja kolizji: gracz/przeciwnicy/przeszkody/krawędź ściany
+- collider gracza to okrąg (mimo, że jest reprezentowany przez trójkąt)
+- exit pod ESC; sterowanie pod WSAD + myszke (LPM do strzelania)
+- strzelanie raycast'em
+
+*LEFT TO DO:*
+- przeciwników jest dużo: prawie losowo rozmieszczani (żeby nie było że na przeszkodzie/graczu)
+- raycast zabija przeciwników
+- sterowani przez steering behaviours
+- atakują melee
+
+## 3. run:
 ### 2.1 detect conan profile
 ```
 conan profile detect --force

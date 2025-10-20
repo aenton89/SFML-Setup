@@ -1,12 +1,18 @@
 cmake_minimum_required(VERSION 3.30)
 project(SFML-Base)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 find_package(SFML COMPONENTS graphics window system audio REQUIRED)
 
 add_executable(SFML-Base
         src/main.cpp
+        src/collision/collider.cpp
+        src/game/game.cpp
+        src/game_objects/game_object.cpp
+        src/game_objects/obstacle/obstacle.cpp
+        src/game_objects/player/player.cpp
+        src/game_objects/player/raycast.cpp
 )
 
 target_link_libraries(SFML-Base sfml-graphics sfml-window sfml-system sfml-audio)
