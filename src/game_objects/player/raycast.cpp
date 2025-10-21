@@ -24,15 +24,27 @@ std::optional<HitInfo> rayCircleIntersect(const sf::Vector2f& origin, const sf::
 
 Raycast::Raycast(): line(sf::Lines, 2), active(false) {}
 
-void Raycast::shoot(const sf::Vector2f& origin, const sf::Vector2f& direction, const std::vector<Obstacle>& obstacles) {
+void Raycast::shoot(const sf::Vector2f& origin, const sf::Vector2f& direction, const std::vector<Obstacle>& obstacles, std::vector<Enemy>& enemies) {
 	// domyślnie bardzo daleko
 	sf::Vector2f endPoint = origin + direction * 10000.f;
 	float minDist = 10000.f;
 
-	// ale może być kolizja z przeszkodami (czy potem przeciwnikami)
+	// ale może być kolizja z przeszkodami - wtedy ucinamy po prostu linie
 	for (const auto& o : obstacles) {
 		auto hit = rayCircleIntersect(origin, direction, o.collider);
 		if (hit && hit->distance < minDist) {
+			minDist = hit->distance;
+			endPoint = hit->point;
+		}
+	}
+
+	// albo z przeciwnikami - wtedy też ucinamy linię + usuwwamy przeciwnika
+	for (auto& e : enemies) {
+		auto hit = rayCircleIntersect(origin, direction, e.collider);
+		if (hit && hit->distance < minDist) {
+			// oznaczamy przeciwnika jako trafionego
+			e.was_hit = true;
+
 			minDist = hit->distance;
 			endPoint = hit->point;
 		}

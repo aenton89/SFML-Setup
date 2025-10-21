@@ -2,8 +2,10 @@
 #include <numbers>
 #include <cmath>
 
-Player::Player(float speed): GameObject(0.f, 0.f, 15.f), speed(speed) {
-	shape = sf::CircleShape(15.f, 3);
+
+
+Player::Player(float speed): GameObject(0.f, 0.f, PLAYER_SIZE), speed(speed) {
+	shape = sf::CircleShape(PLAYER_SIZE, 3);
 	shape.setFillColor(sf::Color::Red);
 	shape.setOrigin(shape.getRadius(), shape.getRadius());
 }
@@ -39,13 +41,14 @@ void Player::updateRotation(sf::RenderWindow& window) {
 	shape.setRotation(angle * 180 / std::numbers::pi + 90.f);
 }
 
-void Player::draw(sf::RenderWindow& window) {
-	window.draw(shape);
+void Player::updateColliderPosition() {
+	collider.position = { shape.getPosition().x, shape.getPosition().y };
 }
 
-void Player::setPosition(const sf::Vector2f& pos) {
-	GameObject::setPosition(pos);
-	shape.setPosition(pos);
+void Player::update(float dt, sf::RenderWindow &window) {
+	handleInput(dt);
+	updateRotation(window);
+	updateColliderPosition();
 }
 
 sf::Vector2f Player::getForwardDirection(sf::RenderWindow& window) const {

@@ -3,6 +3,7 @@
 #include <optional>
 #include "../../collision/collider.h"
 #include "../obstacle/obstacle.h"
+#include "../enemy/enemy.h"
 
 
 
@@ -20,7 +21,7 @@ class Raycast {
 public:
 	Raycast();
 
-	void shoot(const sf::Vector2f& origin, const sf::Vector2f& direction, const std::vector<Obstacle>& obstacles);
+	void shoot(const sf::Vector2f& origin, const sf::Vector2f& direction, const std::vector<Obstacle>& obstacles, std::vector<Enemy>& enemies);
 	void draw(sf::RenderWindow& window);
 	void clear();
 

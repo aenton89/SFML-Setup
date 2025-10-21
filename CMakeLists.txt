@@ -13,6 +13,7 @@ add_executable(SFML-Base
         src/game_objects/obstacle/obstacle.cpp
         src/game_objects/player/player.cpp
         src/game_objects/player/raycast.cpp
+        src/game_objects/enemy/enemy.cpp
 )
 
 target_link_libraries(SFML-Base sfml-graphics sfml-window sfml-system sfml-audio)

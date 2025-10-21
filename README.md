@@ -6,7 +6,7 @@
 - Visual C++ 17 (2022)
 
 ## 2. TODO's:
-### PROJEKT 1; TERMIN (chyba) 06.12; TODO:
+### PROJEKT 1 (strona 85. - chapter 3); TERMIN (chyba) 06.12; TODO:
 - podstawowa mapa: przeszkody to pare rozmieszczonych okręgów
 - implementacja kolizji: gracz/przeciwnicy/przeszkody/krawędź ściany
 - collider gracza to okrąg (mimo, że jest reprezentowany przez trójkąt)

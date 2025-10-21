@@ -1,15 +1,17 @@
 #include "game.h"
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 
 
-Game::Game(): window(sf::VideoMode(1600, 900), "ASSIGNMENT 1: zombie game"), player(200.f) {
+Game::Game(): window(sf::VideoMode(1600, 900), "ASSIGNMENT 1: zombie game"), player(PLAYER_SPEED) {
 	sf::Vector2u winSize = window.getSize();
 	player.setPosition({ winSize.x / 2.f, winSize.y / 2.f });
 
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
-	initObstacles(12);
+	initObstacles(MAX_OBSTACLES_AMOUNT);
+	spawnEnemies(MAX_ENEMIES_AMOUNT);
 }
 
 void Game::initObstacles(int count) {
@@ -24,7 +26,7 @@ void Game::initObstacles(int count) {
 		while (!placed && attempts < 10) {
 			float x = static_cast<float>(std::rand() % winSize.x);
 			float y = static_cast<float>(std::rand() % winSize.y);
-			float r = 20.f + static_cast<float>(std::rand() % 20);
+			float r = MIN_OBSTACLE_SIZE + static_cast<float>(std::rand() % static_cast<int>(MAX_OBSTACLE_SIZE - MIN_OBSTACLE_SIZE));
 
 			Obstacle newObstacle(x, y, r);
 
@@ -50,6 +52,23 @@ void Game::initObstacles(int count) {
 			}
 		}
 	}
+}
+
+void Game::spawnEnemies(int max_amount) {
+	if (enemies.size() >= max_amount)
+		return;
+
+	// TODO: dodać dodawanie w losowym miejscu, byle nie na graczu/przeszkodzie - ale bliżej krańców ekranu
+	for (int i = 0; i < max_amount; ++i) {
+		Enemy newEnemy(100.f, 100.f, ENEMY_SPEED);
+		enemies.push_back(newEnemy);
+	}
+}
+
+void Game::deleteDeadEnemies() {
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),[](const Enemy& e) {
+		return e.was_hit;
+	}), enemies.end());
 }
 
 void Game::keepInsideWindow(GameObject& obj) {
@@ -91,13 +110,9 @@ void Game::processEvents() {
 void Game::update(float deltaTime) {
 	sf::Vector2f prevPos = player.getPosition();
 
-	player.handleInput(deltaTime);
-	player.updateRotation(window);
+	// GRACZ: update + kolizje
+	player.update(deltaTime, window);
 	keepInsideWindow(player);
-
-	// aktualizuj pozycję collidera
-	player.collider.position = { player.getPosition().x, player.getPosition().y };
-
 	// TODO: idk czy tak ma być ogarnięte, potem doczytać - kolizje z przeszkodami
 	for (auto& o : obstacles) {
 		if (player.collider.checkCollision(o.collider)) {
@@ -108,14 +123,41 @@ void Game::update(float deltaTime) {
 		}
 	}
 
-	// raycast tylko gdy przycisk wciśnięty
+	// WROGOWIE: update + kolizje + spawnowanie
+	for (auto& e : enemies) {
+		e.update(deltaTime, window);
+		keepInsideWindow(e);
+
+		// kolizje z przeszkodami
+		for (auto& o : obstacles) {
+			if (e.collider.checkCollision(o.collider)) {
+				// cofnij pozycję
+				e.setPosition(prevPos);
+				e.collider.position = { prevPos.x, prevPos.y };
+				break;
+			}
+		}
+
+		// kolizje z graczem
+		if (e.collider.checkCollision(player.collider)) {
+			// cofnij pozycję
+			e.setPosition(prevPos);
+			e.collider.position = { prevPos.x, prevPos.y };
+			break;
+		}
+	}
+	// usuń + dodaj przeciwników, jeśli gracz ich zabije
+	deleteDeadEnemies();
+	// TODO: narazie zakomentowane do testów raycasta
+	// spawnEnemies(MAX_ENEMIES_AMOUNT);
+
+	// RAYCAST
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		sf::Vector2f dir = player.getForwardDirection(window);
-		raycast.shoot(player.getPosition(), dir, obstacles);
+		raycast.shoot(player.getPosition(), dir, obstacles, enemies);
 	} else {
 		raycast.clear();
 	}
-
 }
 
 void Game::render() {
@@ -124,6 +166,10 @@ void Game::render() {
 	// rysuj przeszkody
 	for (auto& o : obstacles)
 		o.draw(window);
+
+	// no i rysuj przeciwników
+	for (auto& e : enemies)
+		e.draw(window);
 
 	// rysuj gracza i promień
 	raycast.draw(window);

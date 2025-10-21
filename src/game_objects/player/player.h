@@ -2,20 +2,21 @@
 #include <SFML/Graphics.hpp>
 #include "../game_object.h"
 
+#define PLAYER_SIZE 15.f
+
 
 
 class Player : public GameObject {
 public:
+	float speed;
+
 	Player(float speed = 200.f);
 
 	void handleInput(float deltaTime);
 	void updateRotation(sf::RenderWindow& window);
-	void draw(sf::RenderWindow& window);
+	void updateColliderPosition();
 
-	void setPosition(const sf::Vector2f& pos) override;
+	void update(float dt, sf::RenderWindow& window) override;
+
 	sf::Vector2f getForwardDirection(sf::RenderWindow& window) const;
-
-private:
-	sf::CircleShape shape;
-	float speed;
 };
