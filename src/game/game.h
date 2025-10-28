@@ -12,7 +12,7 @@
 
 #define PLAYER_SPEED 200.f
 
-#define MAX_ENEMIES_AMOUNT 5
+#define MAX_ENEMIES_AMOUNT 1
 #define MIN_ENEMY_EDGE_DIST 20.f
 #define MAX_ENEMY_EDGE_DIST 100.f
 
@@ -29,8 +29,8 @@ private:
 
 	Player player;
 	Raycast raycast;
-	std::vector<Obstacle> obstacles;
-	std::vector<Enemy> enemies;
+	std::vector<std::unique_ptr<Obstacle>> obstacles;
+	std::vector<std::unique_ptr<Enemy>> enemies;
 
 	void processEvents();
 	void update(float deltaTime);

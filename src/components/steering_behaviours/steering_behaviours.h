@@ -1,11 +1,13 @@
 #pragma once
-// #include "../../game_objects/enemy/enemy.h"
+#include <cmath>
 #include <SFML/System/Vector2.hpp>
+#include "../helper_methods.h"
 
 class Enemy;
 
 
 
+// klasa odpowiadająca za obliczanie steering behaviours
 class SteeringBehaviours {
 public:
 	Enemy* parent;
@@ -13,10 +15,10 @@ public:
 	void setParent(Enemy* _parent);
 
 	// obliczaja kolejne siły wpływające na Enemy
-	sf::Vector2f seek(sf::Vector2f target_pos);
+	sf::Vector2f seek();
 	sf::Vector2f wallAvoidance();
 	sf::Vector2f obstacleAvoidance();
 
 	// oblicza sume z wszystkich uwzględnianych wektorów
-	sf::Vector2f calculate(sf::Vector2f target_pos);
+	sf::Vector2f calculate();
 };

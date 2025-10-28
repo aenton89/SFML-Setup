@@ -1,7 +1,7 @@
 #include "player.h"
 #include <numbers>
 #include <cmath>
-
+#include <iostream>
 
 
 Player::Player(float _speed): GameObject(0.f, 0.f, PLAYER_SIZE), speed(_speed) {

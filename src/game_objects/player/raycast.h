@@ -21,7 +21,7 @@ class Raycast {
 public:
 	Raycast();
 
-	void shoot(const sf::Vector2f& origin, const sf::Vector2f& direction, const std::vector<Obstacle>& obstacles, std::vector<Enemy>& enemies);
+	void shoot(const sf::Vector2f& origin, const sf::Vector2f& direction, const std::vector<std::unique_ptr<Obstacle>>& obstacles, std::vector<std::unique_ptr<Enemy>>& enemies);
 	void draw(sf::RenderWindow& window);
 	void clear();
 

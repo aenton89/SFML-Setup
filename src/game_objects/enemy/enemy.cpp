@@ -1,5 +1,6 @@
 #include "enemy.h"
 
+#include <iostream>
 
 
 Enemy::Enemy(float _x, float _y, Player* _player): GameObject(_x, _y, ENEMY_SIZE) {
@@ -17,17 +18,15 @@ void Enemy::updateColliderPosition() {
 }
 
 void Enemy::update(float dt, sf::RenderWindow& window) {
-	steering_force = steering.calculate(player->getPosition());
-	velocity += steering_force * dt;
+	steering_force = steering.calculate();
+	velocity += steering_force;
 
 	// ograniczenie prędkości
-	float speedLength = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-	if (speedLength > MAX_ENEMY_SPEED) {
-		speedLength = MAX_ENEMY_SPEED / speedLength;
-		velocity.x *= speedLength;
-		velocity.y *= speedLength;
+	auto length = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+	if (length > MAX_ENEMY_SPEED) {
+		velocity = (velocity / length) * MAX_ENEMY_SPEED;
 	}
 
-	shape.move(velocity);
+	shape.move(velocity*dt);
 	updateColliderPosition();
 }

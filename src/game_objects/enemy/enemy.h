@@ -5,7 +5,7 @@
 
 #define ENEMY_SIZE 15.f
 // na długość wektora prędkości
-#define MAX_ENEMY_SPEED 1.f
+#define MAX_ENEMY_SPEED 200.f
 
 
 

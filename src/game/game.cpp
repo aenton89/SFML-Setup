@@ -38,14 +38,14 @@ void Game::initObstacles(int count) {
 
 			bool overlap = false;
 			for (const auto& existing : obstacles) {
-				if (existing.collider.checkCollision(newObstacle.collider)) {
+				if (existing->collider.checkCollision(newObstacle.collider)) {
 					overlap = true;
 					break;
 				}
 			}
 
 			if (!overlap) {
-				obstacles.push_back(newObstacle);
+				obstacles.push_back(std::make_unique<Obstacle>(newObstacle));
 				placed = true;
 			} else {
 				attempts++;
@@ -56,71 +56,75 @@ void Game::initObstacles(int count) {
 
 // wrogownie pojawiaja się losowo w zakresie MIN_ENEMY_EDGE_DIST do MAX_ENEMY_EDGE_DIST pikseli od krawędzi ekranu
 void Game::spawnEnemies(int max_amount) {
-	if (enemies.size() >= max_amount)
-		return;
+    if (enemies.size() >= max_amount)
+        return;
 
-	sf::Vector2u winSize = window.getSize();
+    sf::Vector2u winSize = window.getSize();
 
-	while (enemies.size() < max_amount) {
-		// wybierz losową krawędź ekranu
-		int edge = std::rand() % 4;
-		float x = 0.f, y = 0.f;
+    while (enemies.size() < max_amount) {
+        int edge = std::rand() % 4;
+        float x = 0.f, y = 0.f;
 
-		switch (edge) {
-			// lewa
-			case 0:
-				x = MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST);
-				y = static_cast<float>(std::rand() % winSize.y);
-				break;
-			// prawa
-			case 1:
-				x = winSize.x - (MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST));
-				y = static_cast<float>(std::rand() % winSize.y);
-				break;
-			// góra
-			case 2:
-				x = static_cast<float>(std::rand() % winSize.x);
-				y = MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST);
-				break;
-			// dół
-			case 3:
-				x = static_cast<float>(std::rand() % winSize.x);
-				y = winSize.y - (MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST));
-				break;
-		}
+        switch (edge) {
+            case 0:
+                x = MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST);
+                y = static_cast<float>(std::rand() % winSize.y);
+                break;
+            case 1:
+                x = winSize.x - (MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST));
+                y = static_cast<float>(std::rand() % winSize.y);
+                break;
+            case 2:
+                x = static_cast<float>(std::rand() % winSize.x);
+                y = MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST);
+                break;
+            case 3:
+                x = static_cast<float>(std::rand() % winSize.x);
+                y = winSize.y - (MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST));
+                break;
+        }
 
-		Enemy newEnemy(x, y, &player);
+        // tymczasowy wróg do testu kolizji
+        Enemy testEnemy(x, y, &player);
 
-		// sprawdzenie, że nie koliduje z graczem
-		bool overlap = player.collider.checkCollision(newEnemy.collider);
-		// ani przeszkodami
-		if (!overlap) {
-			for (const auto& obs : obstacles) {
-				if (obs.collider.checkCollision(newEnemy.collider)) {
-					overlap = true;
-					break;
-				}
-			}
-		}
-		// oraz kolizji z już istniejącymi wrogami
-		if (!overlap) {
-			for (const auto& enemy : enemies) {
-				if (enemy.collider.checkCollision(newEnemy.collider)) {
-					overlap = true;
-					break;
-				}
-			}
-		}
+    	// sprawdzamy kolizje z przeszkodami i innymi wrogami i graczem
+        bool overlap = player.collider.checkCollision(testEnemy.collider);
 
-		if (!overlap)
-			enemies.push_back(newEnemy);
-	}
+        if (!overlap) {
+            for (const auto& obs : obstacles) {
+                if (obs->collider.checkCollision(testEnemy.collider)) {
+                    overlap = true;
+                    break;
+                }
+            }
+        }
+
+        if (!overlap) {
+            for (const auto& enemy : enemies) {
+                if (enemy->collider.checkCollision(testEnemy.collider)) {
+                    overlap = true;
+                    break;
+                }
+            }
+        }
+
+    	// tworzymy wroga bezpośrednio w wektorze - wcześniej był bład bo yadayada zmiana na smart_pointers
+        if (!overlap) {
+            auto enemy = std::make_unique<Enemy>(x, y, &player);
+            enemies.push_back(std::move(enemy));
+        }
+    }
 }
 
+
 void Game::deleteDeadEnemies() {
-	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),[](const Enemy& e) {
-		return e.was_hit;
-	}), enemies.end());
+	enemies.erase(
+		std::remove_if(enemies.begin(), enemies.end(),
+			[](const std::unique_ptr<Enemy>& e) {
+				return e->was_hit;
+			}),
+		enemies.end()
+	);
 }
 
 void Game::keepInsideWindow(GameObject& obj) {
@@ -163,14 +167,13 @@ void Game::update(float deltaTime) {
 	// TODO: DEBUG
 	debug();
 
-	sf::Vector2f prevPos = player.getPosition();
-
 	// GRACZ: update + kolizje
+	sf::Vector2f prevPos = player.getPosition();
 	player.update(deltaTime, window);
 	keepInsideWindow(player);
-	// TODO: idk czy tak ma być ogarnięte, potem doczytać - kolizje z przeszkodami
+
 	for (auto& o : obstacles) {
-		if (player.collider.checkCollision(o.collider)) {
+		if (player.collider.checkCollision(o->collider)) {
 			// cofnij pozycję
 			player.setPosition(prevPos);
 			player.collider.position = { prevPos.x, prevPos.y };
@@ -180,24 +183,26 @@ void Game::update(float deltaTime) {
 
 	// WROGOWIE: update + kolizje + spawnowanie
 	for (auto& e : enemies) {
-		e.update(deltaTime, window);
-		keepInsideWindow(e);
+		// zapamiętaj pozycję WROGA (wcześniej dawałem gracza, xd) przed update
+		sf::Vector2f prevEnemyPos = e->getPosition();
+		e->update(deltaTime, window);
+		keepInsideWindow(*e);
 
 		// kolizje z przeszkodami
 		for (auto& o : obstacles) {
-			if (e.collider.checkCollision(o.collider)) {
+			if (e->collider.checkCollision(o->collider)) {
 				// cofnij pozycję
-				e.setPosition(prevPos);
-				e.collider.position = { prevPos.x, prevPos.y };
+				e->setPosition(prevEnemyPos);
+				e->collider.position = { prevEnemyPos.x, prevEnemyPos.y };
 				break;
 			}
 		}
 
 		// kolizje z graczem
-		if (e.collider.checkCollision(player.collider)) {
+		if (e->collider.checkCollision(player.collider)) {
 			// cofnij pozycję
-			e.setPosition(prevPos);
-			e.collider.position = { prevPos.x, prevPos.y };
+			e->setPosition(prevEnemyPos);
+			e->collider.position = { prevEnemyPos.x, prevEnemyPos.y };
 			break;
 		}
 	}
@@ -219,11 +224,11 @@ void Game::render() {
 
 	// rysuj przeszkody
 	for (auto& o : obstacles)
-		o.draw(window);
+		o->draw(window);
 
 	// no i rysuj przeciwników
 	for (auto& e : enemies)
-		e.draw(window);
+		e->draw(window);
 
 	// rysuj gracza i promień
 	raycast.draw(window);
@@ -234,8 +239,12 @@ void Game::render() {
 
 void Game::debug() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt)) {
+		std::cout<< "dt: " << clock.getElapsedTime().asSeconds() << "\n";
 		std::cout<< "player pos: " << player.getPosition().x << ", " << player.getPosition().y << "\n";
-		std::cout<< "random enemy velocity: " << enemies[0].velocity.x << ", " << enemies[0].velocity.y << "\n";
-		std::cout<< "random enemy pos: " << enemies[0].getPosition().x << ", " << enemies[0].getPosition().y << "\n";
+		std::cout<< "random enemy -> player -> pos: " << enemies[0]->player->getPosition().x << ", " << enemies[0]->player->getPosition().y << "\n";
+		std::cout<< "random steering behaviour -> parent -> player -> pos: " << enemies[0]->steering.parent->player->getPosition().x << ", " << enemies[0]->steering.parent->player->getPosition().y << "\n";
+		std::cout<< "random enemy velocity: " << enemies[0]->velocity.x << ", " << enemies[0]->velocity.y << "\n";
+		std::cout<< "random enemy pos: " << enemies[0]->getPosition().x << ", " << enemies[0]->getPosition().y << "\n";
+		std::cout<< "random steering behaviour -> parent -> pos: " << enemies[0]->steering.parent->getPosition().x << ", " << enemies[0]->steering.parent->getPosition().y << "\n";
 	}
 }
