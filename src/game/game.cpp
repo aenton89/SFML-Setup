@@ -89,7 +89,7 @@ void Game::spawnEnemies(int max_amount) {
 				break;
 		}
 
-		Enemy newEnemy(x, y, ENEMY_SPEED);
+		Enemy newEnemy(x, y, &player);
 
 		// sprawdzenie, że nie koliduje z graczem
 		bool overlap = player.collider.checkCollision(newEnemy.collider);
@@ -160,6 +160,9 @@ void Game::processEvents() {
 }
 
 void Game::update(float deltaTime) {
+	// TODO: DEBUG
+	debug();
+
 	sf::Vector2f prevPos = player.getPosition();
 
 	// GRACZ: update + kolizje
@@ -227,4 +230,12 @@ void Game::render() {
 	player.draw(window);
 
 	window.display();
+}
+
+void Game::debug() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt)) {
+		std::cout<< "player pos: " << player.getPosition().x << ", " << player.getPosition().y << "\n";
+		std::cout<< "random enemy velocity: " << enemies[0].velocity.x << ", " << enemies[0].velocity.y << "\n";
+		std::cout<< "random enemy pos: " << enemies[0].getPosition().x << ", " << enemies[0].getPosition().y << "\n";
+	}
 }

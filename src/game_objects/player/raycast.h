@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <optional>
-#include "../../collision/collider.h"
+#include "../../components/collision/collider.h"
 #include "../obstacle/obstacle.h"
 #include "../enemy/enemy.h"
 

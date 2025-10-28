@@ -2,7 +2,7 @@
 
 
 
-GameObject::GameObject(float x, float y, float r): collider(x, y, r) {}
+GameObject::GameObject(float _x, float _y, float _r): collider(_x, _y, _r) {}
 
 void GameObject::setPosition(const sf::Vector2f& pos) {
 	collider.position = {pos.x, pos.y};

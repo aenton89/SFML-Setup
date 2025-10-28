@@ -21,7 +21,7 @@ public:
 	Vec2 position;
 	float radius;
 
-	Collider(float x = 0, float y = 0, float r = 10);
+	Collider(float _x = 0, float _y = 0, float _r = 10);
 
 	bool checkCollision(const Collider& other) const;
 };

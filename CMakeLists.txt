@@ -7,7 +7,8 @@ find_package(SFML COMPONENTS graphics window system audio REQUIRED)
 
 add_executable(SFML-Base
         src/main.cpp
-        src/collision/collider.cpp
+        src/components/collision/collider.cpp
+        src/components/steering_behaviours/steering_behaviours.cpp
         src/game/game.cpp
         src/game_objects/game_object.cpp
         src/game_objects/obstacle/obstacle.cpp

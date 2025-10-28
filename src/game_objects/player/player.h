@@ -10,7 +10,7 @@ class Player : public GameObject {
 public:
 	float speed;
 
-	Player(float speed = 200.f);
+	Player(float _speed = 200.f);
 
 	void handleInput(float deltaTime);
 	void updateRotation(sf::RenderWindow& window);

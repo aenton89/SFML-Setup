@@ -6,5 +6,5 @@
 
 class Obstacle : public GameObject {
 public:
-	Obstacle(float x = 0, float y = 0, float radius = 20.f);
+	Obstacle(float _x = 0, float _y = 0, float _radius = 20.f);
 };

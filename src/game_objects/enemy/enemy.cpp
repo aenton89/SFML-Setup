@@ -2,18 +2,14 @@
 
 
 
-Enemy::Enemy(float x, float y, float speed): GameObject(x, y, ENEMY_SIZE), speed(speed) {
+Enemy::Enemy(float _x, float _y, Player* _player): GameObject(_x, _y, ENEMY_SIZE) {
 	shape.setRadius(ENEMY_SIZE);
 	shape.setOrigin(ENEMY_SIZE, ENEMY_SIZE);
 	shape.setFillColor(sf::Color::Green);
-	shape.setPosition(x, y);
-}
+	shape.setPosition(_x, _y);
 
-// TODO: tu steering behaviour
-void Enemy::steeringBehavior() {
-	// w sumie tu po prostu wywołania innych funkcji
-	// jak wander, seek itd.
-	return;
+	steering.setParent(this);
+	player = _player;
 }
 
 void Enemy::updateColliderPosition() {
@@ -21,6 +17,17 @@ void Enemy::updateColliderPosition() {
 }
 
 void Enemy::update(float dt, sf::RenderWindow& window) {
-	// steeringBehavior();
+	steering_force = steering.calculate(player->getPosition());
+	velocity += steering_force * dt;
+
+	// ograniczenie prędkości
+	float speedLength = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+	if (speedLength > MAX_ENEMY_SPEED) {
+		speedLength = MAX_ENEMY_SPEED / speedLength;
+		velocity.x *= speedLength;
+		velocity.y *= speedLength;
+	}
+
+	shape.move(velocity);
 	updateColliderPosition();
 }

@@ -12,8 +12,7 @@
 
 #define PLAYER_SPEED 200.f
 
-#define MAX_ENEMIES_AMOUNT 20
-#define ENEMY_SPEED 50.f
+#define MAX_ENEMIES_AMOUNT 5
 #define MIN_ENEMY_EDGE_DIST 20.f
 #define MAX_ENEMY_EDGE_DIST 100.f
 
@@ -41,4 +40,6 @@ private:
 	void spawnEnemies(int max_amount);
 	void deleteDeadEnemies();
 	void keepInsideWindow(GameObject& obj);
+
+	void debug();
 };

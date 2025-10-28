@@ -2,9 +2,9 @@
 
 
 
-Obstacle::Obstacle(float x, float y, float radius): GameObject(x, y, radius) {
-	shape.setRadius(radius);
-	shape.setOrigin(radius, radius);
+Obstacle::Obstacle(float _x, float _y, float _radius): GameObject(_x, _y, _radius) {
+	shape.setRadius(_radius);
+	shape.setOrigin(_radius, _radius);
 	shape.setFillColor(sf::Color(100, 100, 100));
-	shape.setPosition(x, y);
+	shape.setPosition(_x, _y);
 }

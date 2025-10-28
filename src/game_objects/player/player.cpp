@@ -4,7 +4,7 @@
 
 
 
-Player::Player(float speed): GameObject(0.f, 0.f, PLAYER_SIZE), speed(speed) {
+Player::Player(float _speed): GameObject(0.f, 0.f, PLAYER_SIZE), speed(_speed) {
 	shape = sf::CircleShape(PLAYER_SIZE, 3);
 	shape.setFillColor(sf::Color::Red);
 	shape.setOrigin(shape.getRadius(), shape.getRadius());
