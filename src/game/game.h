@@ -12,8 +12,10 @@
 
 #define PLAYER_SPEED 200.f
 
-#define MAX_ENEMIES_AMOUNT 1
+#define MAX_ENEMIES_AMOUNT 20
 #define ENEMY_SPEED 50.f
+#define MIN_ENEMY_EDGE_DIST 20.f
+#define MAX_ENEMY_EDGE_DIST 100.f
 
 
 

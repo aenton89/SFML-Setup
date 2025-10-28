@@ -54,14 +54,66 @@ void Game::initObstacles(int count) {
 	}
 }
 
+// wrogownie pojawiaja się losowo w zakresie MIN_ENEMY_EDGE_DIST do MAX_ENEMY_EDGE_DIST pikseli od krawędzi ekranu
 void Game::spawnEnemies(int max_amount) {
 	if (enemies.size() >= max_amount)
 		return;
 
-	// TODO: dodać dodawanie w losowym miejscu, byle nie na graczu/przeszkodzie - ale bliżej krańców ekranu
-	for (int i = 0; i < max_amount; ++i) {
-		Enemy newEnemy(100.f, 100.f, ENEMY_SPEED);
-		enemies.push_back(newEnemy);
+	sf::Vector2u winSize = window.getSize();
+
+	while (enemies.size() < max_amount) {
+		// wybierz losową krawędź ekranu
+		int edge = std::rand() % 4;
+		float x = 0.f, y = 0.f;
+
+		switch (edge) {
+			// lewa
+			case 0:
+				x = MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST);
+				y = static_cast<float>(std::rand() % winSize.y);
+				break;
+			// prawa
+			case 1:
+				x = winSize.x - (MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST));
+				y = static_cast<float>(std::rand() % winSize.y);
+				break;
+			// góra
+			case 2:
+				x = static_cast<float>(std::rand() % winSize.x);
+				y = MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST);
+				break;
+			// dół
+			case 3:
+				x = static_cast<float>(std::rand() % winSize.x);
+				y = winSize.y - (MIN_ENEMY_EDGE_DIST + static_cast<float>(std::rand()) / RAND_MAX * (MAX_ENEMY_EDGE_DIST - MIN_ENEMY_EDGE_DIST));
+				break;
+		}
+
+		Enemy newEnemy(x, y, ENEMY_SPEED);
+
+		// sprawdzenie, że nie koliduje z graczem
+		bool overlap = player.collider.checkCollision(newEnemy.collider);
+		// ani przeszkodami
+		if (!overlap) {
+			for (const auto& obs : obstacles) {
+				if (obs.collider.checkCollision(newEnemy.collider)) {
+					overlap = true;
+					break;
+				}
+			}
+		}
+		// oraz kolizji z już istniejącymi wrogami
+		if (!overlap) {
+			for (const auto& enemy : enemies) {
+				if (enemy.collider.checkCollision(newEnemy.collider)) {
+					overlap = true;
+					break;
+				}
+			}
+		}
+
+		if (!overlap)
+			enemies.push_back(newEnemy);
 	}
 }
 
@@ -148,8 +200,7 @@ void Game::update(float deltaTime) {
 	}
 	// usuń + dodaj przeciwników, jeśli gracz ich zabije
 	deleteDeadEnemies();
-	// TODO: narazie zakomentowane do testów raycasta
-	// spawnEnemies(MAX_ENEMIES_AMOUNT);
+	spawnEnemies(MAX_ENEMIES_AMOUNT);
 
 	// RAYCAST
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
