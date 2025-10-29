@@ -5,8 +5,11 @@
 - Conan
 - Visual C++ 17 (2022)
 
-## 2. TODO's:
-### PROJEKT 1 (strona 85. - chapter 3); TERMIN (chyba) 06.12; TODO:
+## 2. PROJEKT 1 (strona 85. - chapter 3); TERMIN (chyba) 06.12
+### 2.1 chyba niepotrzebna notka
+korzysta z czcionki Public Sans (SIL Open Font License)
+
+### 2.2 DONE:
 - podstawowa mapa: przeszkody to pare rozmieszczonych okręgów
 - implementacja kolizji: gracz/przeciwnicy/przeszkody/krawędź ściany
 - collider gracza to okrąg (mimo, że jest reprezentowany przez trójkąt)
@@ -16,7 +19,7 @@
 - raycast zabija przeciwników
 - przeciwnicy atakują melee
 
-*LEFT TO DO:*
+### 2.3 TO DO:
 - sterowani przez steering behaviours
 
 ## 3. run:

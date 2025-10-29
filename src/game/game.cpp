@@ -236,7 +236,7 @@ void Game::render() {
 
 void Game::gameOver() {
 	sf::Font font;
-	if (!font.loadFromFile("../../fonts/DejaVuSerif.ttf"))
+	if (!font.loadFromFile("../../fonts/PublicSans-Black.ttf"))
 		std::cerr << "ERR: can't load font!\n";
 
 	sf::Text gameOverText;
