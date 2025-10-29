@@ -10,12 +10,12 @@
 - podstawowa mapa: przeszkody to pare rozmieszczonych okręgów
 - implementacja kolizji: gracz/przeciwnicy/przeszkody/krawędź ściany
 - collider gracza to okrąg (mimo, że jest reprezentowany przez trójkąt)
-- exit pod ESC; sterowanie pod WSAD + myszke (LPM do strzelania)
+- exit pod ESC; sterowanie pod WSAD + myszke (LPM do strzelania); debug pod LeftAlt
 - strzelanie raycast'em
-
-*LEFT TO DO:*
 - przeciwników jest dużo: prawie losowo rozmieszczani (żeby nie było że na przeszkodzie/graczu)
 - raycast zabija przeciwników
+
+*LEFT TO DO:*
 - sterowani przez steering behaviours
 - atakują melee
 

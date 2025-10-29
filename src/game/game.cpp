@@ -200,10 +200,7 @@ void Game::update(float deltaTime) {
 
 		// kolizje z graczem
 		if (e->collider.checkCollision(player.collider)) {
-			// cofnij pozycję
-			e->setPosition(prevEnemyPos);
-			e->collider.position = { prevEnemyPos.x, prevEnemyPos.y };
-			break;
+			gameOver();
 		}
 	}
 	// usuń + dodaj przeciwników, jeśli gracz ich zabije
@@ -235,6 +232,32 @@ void Game::render() {
 	player.draw(window);
 
 	window.display();
+}
+
+void Game::gameOver() {
+	sf::Font font;
+	if (!font.loadFromFile("../../times-new-roman/times.ttf"))
+		std::cerr << "ERR: can't load font!\n";
+
+	sf::Text gameOverText;
+	gameOverText.setFont(font);
+	gameOverText.setString("GAME OVER");
+	gameOverText.setCharacterSize(100);
+	gameOverText.setFillColor(sf::Color::White);
+
+	// wyśrodkowanie napisu
+	sf::FloatRect textRect = gameOverText.getLocalBounds();
+	gameOverText.setOrigin(textRect.width / 2, textRect.height / 2);
+	gameOverText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+	// wyczyść ekran, narysuj napis i wyświetl
+	window.clear(sf::Color::Black);
+	window.draw(gameOverText);
+	window.display();
+
+	// zatrzymaj grę na chwilę i zamknij okno
+	sf::sleep(sf::seconds(3));
+	window.close();
 }
 
 void Game::debug() {
