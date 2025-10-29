@@ -14,10 +14,10 @@
 - strzelanie raycast'em
 - przeciwników jest dużo: prawie losowo rozmieszczani (żeby nie było że na przeszkodzie/graczu)
 - raycast zabija przeciwników
+- przeciwnicy atakują melee
 
 *LEFT TO DO:*
 - sterowani przez steering behaviours
-- atakują melee
 
 ## 3. run:
 ### 2.1 detect conan profile
