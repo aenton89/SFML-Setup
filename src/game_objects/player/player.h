@@ -1,16 +1,18 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "../game_object.h"
+// #include "../../game/game.h"
 
-#define PLAYER_SIZE 15.f
+class Game;
 
 
 
 class Player : public GameObject {
 public:
+	Game* game;
 	float speed;
 
-	Player(float _speed = 200.f);
+	Player(float _speed = 200.f, Game* _game = nullptr);
 
 	void handleInput(float deltaTime);
 	void updateRotation(sf::RenderWindow& window);

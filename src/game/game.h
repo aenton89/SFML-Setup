@@ -6,16 +6,6 @@
 #include "../game_objects/obstacle/obstacle.h"
 #include "../game_objects/enemy/enemy.h"
 
-#define MIN_OBSTACLE_SIZE 20.f
-#define MAX_OBSTACLE_SIZE 40.f
-#define MAX_OBSTACLES_AMOUNT 12
-
-#define PLAYER_SPEED 200.f
-
-#define MAX_ENEMIES_AMOUNT 10
-#define MIN_ENEMY_EDGE_DIST 20.f
-#define MAX_ENEMY_EDGE_DIST 100.f
-
 
 
 class Game {
@@ -23,14 +13,14 @@ public:
 	Game();
 	void run();
 
+	std::vector<std::unique_ptr<Obstacle>> obstacles;
+	std::vector<std::unique_ptr<Enemy>> enemies;
 private:
 	sf::RenderWindow window;
 	sf::Clock clock;
 
 	Player player;
 	Raycast raycast;
-	std::vector<std::unique_ptr<Obstacle>> obstacles;
-	std::vector<std::unique_ptr<Enemy>> enemies;
 
 	void processEvents();
 	void update(float deltaTime);

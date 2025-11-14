@@ -1,11 +1,12 @@
 #include "game.h"
+#include "../helpers/parameters.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 
 
 
-Game::Game(): window(sf::VideoMode(1600, 900), "ASSIGNMENT 1: zombie game"), player(PLAYER_SPEED) {
+Game::Game(): window(sf::VideoMode(1600, 900), "ASSIGNMENT 1: zombie game"), player(PLAYER_SPEED, this) {
 	sf::Vector2u winSize = window.getSize();
 	player.setPosition({ winSize.x / 2.f, winSize.y / 2.f });
 
@@ -201,6 +202,21 @@ void Game::update(float deltaTime) {
 		// kolizje z graczem
 		if (e->collider.checkCollision(player.collider)) {
 			gameOver();
+		}
+
+		// TODO: czy one mają być??? - bo jak tak, to trzeba uwzględnić wrogów w obstacle avoidance???
+		// kolizje wrog-wrog
+		for (auto& other : enemies) {
+			// pomiń siebie
+			if (other.get() == e.get())
+				continue;
+
+			if (e->collider.checkCollision(other->collider)) {
+				// cofnij pozycję
+				e->setPosition(prevEnemyPos);
+				e->collider.position = { prevEnemyPos.x, prevEnemyPos.y };
+				break;
+			}
 		}
 	}
 	// usuń + dodaj przeciwników, jeśli gracz ich zabije

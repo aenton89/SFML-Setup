@@ -1,13 +1,16 @@
 #include "player.h"
+#include "../../helpers/parameters.h"
 #include <numbers>
 #include <cmath>
 #include <iostream>
 
 
-Player::Player(float _speed): GameObject(0.f, 0.f, PLAYER_SIZE), speed(_speed) {
+Player::Player(float _speed, Game* _game): GameObject(0.f, 0.f, PLAYER_SIZE), speed(_speed) {
 	shape = sf::CircleShape(PLAYER_SIZE, 3);
 	shape.setFillColor(sf::Color::Red);
 	shape.setOrigin(shape.getRadius(), shape.getRadius());
+
+	game = _game;
 }
 
 void Player::handleInput(float deltaTime) {

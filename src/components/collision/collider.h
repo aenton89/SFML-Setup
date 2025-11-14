@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
-#include "../helper_methods.h"
+#include "../../helpers/helper_methods.h"
 
 
 
